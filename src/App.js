@@ -3,7 +3,8 @@ import logo from './logo.svg';
 import './App.css';
 import axios from 'axios';
 
-import { groupBy, min, keys } from 'underscore';
+import Ranking from './components/Ranking';
+import SmallestCountries from './components/SmallestCountries';
 
 class App extends Component {
 
@@ -11,13 +12,12 @@ class App extends Component {
     super(props);
     this.state = {
       worldPop: 0,
-      statesPop: 0,
-      ranking: {},
-      smallestCountries: {}
+      statesPop: 0
     };
   }
 
   componentDidMount() {
+    // var worldPop, statesPop, smallestCountries, ranking;
     axios.get(`http://api.population.io:80/1.0/population/World/today-and-tomorrow/`)
       .then(res => {
         const worldPop = res.data.total_population[0].population;
@@ -31,22 +31,9 @@ class App extends Component {
         // const posts = res.data.data.children.map(obj => obj.data);
         this.setState({ statesPop });
       });
-
-    axios.get(`http://api.population.io:80/1.0/countries`)
-      .then(res => {
-        const countriesByLength = groupBy(res.data.countries, 'length');
-        const smallestCountries = countriesByLength[min(keys(countriesByLength).map(Number))];
-        this.setState({ smallestCountries });
-      });
-
-    axios.get(`http://api.population.io:80/1.0/wp-rank/1992-04-18/male/United%20States/today/`)
-      .then(res => {
-        this.setState({ ranking: res.data });
-    });
   }
 
   render() {
-    console.log(this.state.smallestCountries)
     return (
       <div className="App">
         <div className="App-header">
@@ -64,11 +51,10 @@ class App extends Component {
           </div>
         </div>
         <div>
-          <h2>Shortest Country Names</h2>
+          <SmallestCountries/>
         </div>
         <div>
-          <h2>Check Your Ranking</h2>
-          <p>{this.state.ranking.rank}</p>
+          <Ranking/>
         </div>
       </div>
     );
