@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Row, Col, PanelGroup, Panel, ListGroup, ListGroupItem } from 'react-bootstrap';
 
 import axios from 'axios';
 
@@ -27,11 +28,26 @@ class Country extends Component {
       });
   }
 
+  removePop() {
+    this.props.removePop(this.state.total);
+  }
+
   render() {
+
     return (
-      <div className="Country" onClick={this.getPopulation.bind(this)}>
-        {this.props.country}
-      </div>
+      <Row>
+        <Col xs={4} xsOffset={4}>
+          <PanelGroup accordion>
+            <Panel header={this.props.country} bsStyle="primary" eventKey="1" onEntering={this.getPopulation.bind(this)} onExited={this.removePop.bind(this)}>
+              <ListGroup fill>
+                <ListGroupItem><strong>Total Population:</strong> {this.state.total.toLocaleString()}</ListGroupItem>
+                <ListGroupItem><strong>Male Population:</strong> {this.state.males.toLocaleString()}</ListGroupItem>
+                <ListGroupItem><strong>Female Population:</strong> {this.state.females.toLocaleString()}</ListGroupItem>
+              </ListGroup>
+            </Panel>
+          </PanelGroup>
+        </Col>
+      </Row>
     );
   }
 }

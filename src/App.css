@@ -2,11 +2,6 @@
   text-align: center;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
-}
-
 .App-header {
   background-color: #222;
   height: 150px;
@@ -14,16 +9,25 @@
   color: white;
 }
 
-.App-intro {
-  font-size: large;
-}
-
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.App-pop {
+  background: gray;
+  color: white;
 }
 
 .App-flex {
   display: flex;
   justify-content: space-around;
+}
+
+.SmallestCountries > button {
+  margin: 10px;
+}
+
+.SmallestCountries-info {
+  display: flex;
+  justify-content: center;
+}
+
+.SmallestCountries-info > p {
+  padding: 20px;
 }

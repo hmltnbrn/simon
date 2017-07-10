@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import { Button, Form, FormGroup, FormControl, ControlLabel, HelpBlock } from 'react-bootstrap';
 
+import RankingCard from './components/RankingCard';
+
 import axios from 'axios';
+import moment from 'moment';
 
 class Ranking extends Component {
 
@@ -10,64 +13,94 @@ class Ranking extends Component {
     this.state = {
       gender: "",
       dob: "",
-      ranking: {}
+      ranking: {},
+      genderValid: null,
+      dobValid: null,
+      helpText: ""
     };
   }
 
   handleGender(event) {
-    this.setState({gender:event.target.value});
+    if(event.target.value === 'select') this.setState({ gender: event.target.value, genderValid: 'error' });
+    else this.setState({ gender: event.target.value, genderValid: 'success' });
   }
 
   handleDob(event) {
-    this.setState({dob:event.target.value});
+    if(moment(event.target.value, "YYYY-MM-DD", true).isValid()) this.setState({dob: event.target.value, dobValid: 'success'});
+    else this.setState({ dob: event.target.value, dobValid: 'error' });
   }
   
   getRank() {
-    const url = 'http://api.population.io:80/1.0/wp-rank/' + this.state.dob + '/' + this.state.gender + '/World/today/'
-    axios.get(url)
-      .then(res => {
-        const ranking = res.data;
-        this.setState({ ranking });
-    });
+    if(this.state.genderValid === 'success' && this.state.dobValid === 'success') {
+      const url = 'http://api.population.io:80/1.0/wp-rank/' + this.state.dob + '/' + this.state.gender + '/World/today/'
+      axios.get(url)
+        .then(res => {
+          const ranking = res.data;
+          this.setState({ ranking, helpText: "" });
+      });
+    }
+    else {
+      this.setState({ helpText: "Please fix your information" });
+    }
   }
 
-  getValidationState() {
-    const length = this.state.dob.length;
-    if (length > 10) return 'success';
-    else if (length > 5) return 'warning';
-    else if (length > 0) return 'error';
+  clearInfo() {
+    this.setState({
+      gender: "",
+      dob: "",
+      ranking: {},
+      genderValid: null,
+      dobValid: null,
+      helpText: ""
+    });
   }
 
   render() {
     return (
       <div className="Ranking">
         <h2>Check Your Ranking</h2>
-          <Form>
-            <FormGroup controlId="formControlsSelect">
+        <h4>Enter you information to check where you rank</h4>
+        <p style={{ color: "red" }}>{this.state.helpText}</p>
+          <Form inline>
+            <FormGroup
+              controlId="genderSelect"
+              validationState={this.state.genderValid}
+            >
               <ControlLabel>Gender</ControlLabel>
-              <FormControl componentClass="select" placeholder="select" onChange={this.handleGender.bind(this)}>
+              {' '}
+              <FormControl componentClass="select" value={this.state.gender} placeholder="select" onChange={this.handleGender.bind(this)}>
                 <option value="select">select</option>
                 <option value="male">Male</option>
                 <option value="female">Female</option>
               </FormControl>
+              <HelpBlock>ex: Male</HelpBlock>
             </FormGroup>
+            {' '}
             <FormGroup
-              controlId="formBasicText"
-              validationState={this.getValidationState()}
+              controlId="gobText"
+              validationState={this.state.dobValid}
             >
-              <ControlLabel>Working example with validation</ControlLabel>
+              <ControlLabel>Date of Birth</ControlLabel>
+              {' '}
               <FormControl
                 type="text"
                 value={this.state.dob}
-                placeholder="Enter text"
+                placeholder="Date of Birth"
                 onChange={this.handleDob.bind(this)}
               />
               <FormControl.Feedback />
-              <HelpBlock>Validation is based on string length.</HelpBlock>
+              <HelpBlock>ex: 1992-04-18</HelpBlock>
             </FormGroup>
-            <Button onClick={this.getRank.bind(this)}>Rank Me</Button>
+            {' '}
+            { this.state.ranking.rank === undefined ?
+              <Button bsStyle="primary" onClick={this.getRank.bind(this)}>Fetch</Button> :
+              <Button bsStyle="danger" onClick={this.clearInfo.bind(this)}>Clear</Button>
+            }
           </Form>
-          <p>{this.state.ranking.rank}</p>
+          { this.state.ranking.rank !== undefined ?
+            <RankingCard gender={this.state.gender} dob={this.state.dob} ranking={this.state.ranking}/> :
+            ""
+          }
       </div>
     );
   }

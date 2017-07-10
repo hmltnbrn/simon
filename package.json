@@ -1,13 +1,21 @@
 {
   "name": "simon",
-  "version": "0.1.0",
-  "private": true,
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hmltnbrn/simon"
+  },
+  "author": "Brian Hamilton",
+  "bugs": {
+    "url": "https://github.com/hmltnbrn/simon/issues"
+  },
+  "license": "MIT",
   "dependencies": {
     "axios": "^0.16.2",
     "bootstrap": "^3.3.7",
+    "moment": "^2.18.1",
     "react": "^15.6.1",
     "react-bootstrap": "^0.31.0",
-    "react-bootstrap-date-picker": "^5.0.1",
     "react-dom": "^15.6.1",
     "react-scripts": "1.0.10",
     "underscore": "^1.8.3"
